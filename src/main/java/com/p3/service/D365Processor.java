@@ -1,6 +1,7 @@
-package com.p3.d365.service;
+package com.p3.service;
 
-import com.p3.d365.beans.D365ConnectionInfo;
+import com.p3.beans.D365ConnectionInfo;
+import com.p3.beans.metadata.ETLMetaData;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,11 +10,11 @@ import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataRetrieveRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.stereotype.Service;
@@ -25,37 +26,15 @@ public class D365Processor {
 
   public String processPreAnalysis(D365ConnectionInfo info) throws IOException {
     String accessToken = GetAccessToken(info);
-    String metadataUrl = info.getResourceUrl() + "/api/data/v9.0/$metadata";
-    processRegularRequest(accessToken, metadataUrl);
+    String metadataUrl = info.getResourceUrl() + "/api/data/v9.0";
+    XMLMetadata xmlMetadata = analyzeMetadata(accessToken, metadataUrl);
+    processXmlMetadata(xmlMetadata);
     return "metadata processed";
   }
 
-  private void processRegularRequest(String accessToken, String metadataUrl) throws IOException {
-    URL url = new URL(metadataUrl);
+  private void processXmlMetadata(XMLMetadata xmlMetadata) {
+    ETLMetaData etlMetaData = ETLMetaData.builder().build();
 
-    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod("GET");
-    connection.setRequestProperty("Authorization", "Bearer " + accessToken);
-    connection.setRequestProperty("Accept", "application/xml");
-
-    int status = connection.getResponseCode();
-    if (status != HttpURLConnection.HTTP_OK) {
-      throw new IOException("HTTP request failed with status code " + status);
-    }
-
-    try (BufferedReader reader =
-        new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-      StringBuilder response = new StringBuilder();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        response.append(line);
-      }
-      String xmlResponse = response.toString();
-      System.out.println("Received metadata response: ");
-      System.out.println(xmlResponse);
-    } finally {
-      connection.disconnect();
-    }
   }
 
   private BufferedReader getBufferedReader(String AUTHORITY, String parameters) throws IOException {
@@ -76,43 +55,19 @@ public class D365Processor {
     return new BufferedReader(new InputStreamReader(connection.getInputStream()));
   }
 
-  private void analyzeMetadata(String accessToken, String metadataUrl) {
+  private XMLMetadata analyzeMetadata(String accessToken, String metadataUrl) {
     try {
       ODataClient client = ODataClientFactory.getClient();
       URIBuilder uriBuilder = client.newURIBuilder(metadataUrl);
-
-      ODataRetrieveRequest<Edm> metadataRequest =
-          client.getRetrieveRequestFactory().getMetadataRequest(String.valueOf(uriBuilder.build()));
-      metadataRequest.addCustomHeader("Authorization", "Bearer " + accessToken);
-
-      ODataRetrieveResponse<Edm> response = metadataRequest.execute();
-
-      Edm edm = response.getBody();
-
-      System.out.println("Entity Sets:");
-      edm.getSchemas()
-          .forEach(
-              schema -> {
-                schema
-                    .getEntityContainer()
-                    .getEntitySets()
-                    .forEach(
-                        entitySet -> {
-                          System.out.println(" - " + entitySet.getName());
-                          entitySet
-                              .getEntityType()
-                              .getPropertyNames()
-                              .forEach(
-                                  propertyName -> {
-                                    System.out.println("   Property: " + propertyName);
-                                  });
-                        });
-              });
-
+      XMLMetadataRequest xmlMetadataRequest =
+          client
+              .getRetrieveRequestFactory()
+              .getXMLMetadataRequest(String.valueOf(uriBuilder.build()));
+      xmlMetadataRequest.addCustomHeader("Authorization", "Bearer " + accessToken);
+      ODataRetrieveResponse<XMLMetadata> response = xmlMetadataRequest.execute();
+      return response.getBody();
     } catch (Exception e) {
-
-      String message = e.getMessage();
-      throw new RuntimeException(message);
+      throw new RuntimeException(e.getMessage());
     }
   }
 

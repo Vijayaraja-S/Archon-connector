@@ -1,4 +1,4 @@
-package com.p3.d365.beans;
+package com.p3.beans;
 
 
 import lombok.AllArgsConstructor;

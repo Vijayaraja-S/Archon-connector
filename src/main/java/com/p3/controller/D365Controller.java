@@ -1,7 +1,7 @@
-package com.p3.d365.controller;
+package com.p3.controller;
 
-import com.p3.d365.beans.D365ConnectionInfo;
-import com.p3.d365.service.D365Processor;
+import com.p3.beans.D365ConnectionInfo;
+import com.p3.service.D365Processor;
 import java.io.IOException;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
