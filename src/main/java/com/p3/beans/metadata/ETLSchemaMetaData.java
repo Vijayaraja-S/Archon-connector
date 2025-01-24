@@ -11,6 +11,7 @@ import lombok.*;
 @Builder
 public class ETLSchemaMetaData {
     private String name;
+    private String aliasName;
     private String archonFormattedName;
     private Integer tableCount;
     private Double totalSizeInMB;
