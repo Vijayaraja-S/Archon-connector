@@ -7,12 +7,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
-import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.stereotype.Service;
@@ -20,7 +14,6 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class ConnectionManager {
-  private static final String BEARER = "Bearer ";
   private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
 
   public String getAccessToken(D365ConnectionInfo info) throws IOException {
@@ -75,21 +68,5 @@ public class ConnectionManager {
     }
 
     return new BufferedReader(new InputStreamReader(connection.getInputStream()));
-  }
-
-  XMLMetadata getXMLMetadata(String accessToken, String metadataUrl) {
-    try {
-      ODataClient client = ODataClientFactory.getClient();
-      URIBuilder uriBuilder = client.newURIBuilder(metadataUrl);
-      XMLMetadataRequest xmlMetadataRequest =
-          client
-              .getRetrieveRequestFactory()
-              .getXMLMetadataRequest(String.valueOf(uriBuilder.build()));
-      xmlMetadataRequest.addCustomHeader("Authorization", BEARER + accessToken);
-      ODataRetrieveResponse<XMLMetadata> response = xmlMetadataRequest.execute();
-      return response.getBody();
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to analyze metadata: " + e.getMessage(), e);
-    }
   }
 }
