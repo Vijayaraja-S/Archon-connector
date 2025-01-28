@@ -28,4 +28,9 @@ public class PreAnalysisTableMapperBean {
   private List<PreAnalysisColumnMapperBean> columnList;
   private List<PreAnalysisRelationMapperBean> relations; // relations per table...
   private Set<String> relatedTable;
+
+  /**
+   * D365
+    */
+  private String  entitySetUrl;
 }
