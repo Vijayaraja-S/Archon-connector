@@ -25,12 +25,11 @@ public class PreAnalysisTableMapperBean {
   private Boolean containsBlob = false;
   private Boolean containsClob = false;
   private Boolean isRelationship = false;
-  private List<PreAnalysisColumnMapperBean> columnList;
-  private List<PreAnalysisRelationMapperBean> relations; // relations per table...
+  private List<PreAnalysisColumnMapperBean> columnList;// relations per table...
   private Set<String> relatedTable;
-
   /**
    * D365
     */
   private String  entitySetUrl;
+  private List<RelationDetails> relationDetails;
 }

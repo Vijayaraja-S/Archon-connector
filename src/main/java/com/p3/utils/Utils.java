@@ -2,10 +2,14 @@ package com.p3.utils;
 
 import static com.p3.utils.URLConstants.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,5 +34,19 @@ public class Utils {
       return null;
     }
     return resourceUrl + BASE_URL + SEPARATOR + entitysetName;
+  }
+
+  public Set<String> getRelatedTable(CsdlEntityType entityType) {
+    if (entityType == null) {
+      return Collections.emptySet();
+    }
+    return entityType.getNavigationProperties().stream()
+        .map(CsdlNavigationProperty::getType)
+        .map(
+            type -> {
+              String[] split = type.split("\\.");
+              return split[split.length - 1];
+            })
+        .collect(Collectors.toSet());
   }
 }
