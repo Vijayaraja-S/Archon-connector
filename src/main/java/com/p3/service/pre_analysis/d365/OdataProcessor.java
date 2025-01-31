@@ -1,11 +1,11 @@
-package com.p3.service;
+package com.p3.service.pre_analysis.d365;
 
 import static com.p3.utils.URLConstants.*;
 
 import com.p3.exception.OdataProcessingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;

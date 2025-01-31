@@ -1,6 +1,7 @@
-package com.p3.service;
+package com.p3.service.connection.service.api;
 
-import com.p3.beans.D365ConnectionInfo;
+import com.p3.beans.request.D365ConnectionInfo;
+import com.p3.beans.request.DatasourceProfileRequestDTO;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,12 +10,31 @@ import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.springframework.stereotype.Service;
 
-@Service
 @Slf4j
-public class ConnectionManager {
+public class D365Connection extends AbstractAPIConnector {
   private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
+
+  @Override
+  public boolean testConnection(DatasourceProfileRequestDTO ds) {
+    try {
+      String token = getAccessToken(ds.getD365ConnectionInfo());
+      return token != null && !token.isEmpty();
+    } catch (IOException e) {
+      log.error("Failed to test D365 connection", e);
+      return false;
+    }
+  }
+
+  @Override
+  public String getConnection(DatasourceProfileRequestDTO ds) {
+    try {
+      return getAccessToken(ds.getD365ConnectionInfo());
+    } catch (IOException e) {
+      log.error("Failed to get D365 connection", e);
+      throw new RuntimeException("Failed to establish connection", e);
+    }
+  }
 
   public String getAccessToken(D365ConnectionInfo info) throws IOException {
     String parameters = buildUrlParameters(info);

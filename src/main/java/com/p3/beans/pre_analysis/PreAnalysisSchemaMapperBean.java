@@ -1,6 +1,8 @@
 package com.p3.beans.pre_analysis;
 
 import java.util.List;
+
+import com.p3.beans.pre_analysis.d365.PreAnalysisComplexTypeMapperBean;
 import lombok.*;
 
 @Data
@@ -15,4 +17,5 @@ public class PreAnalysisSchemaMapperBean {
   private String databaseName;
   private Integer tableCount;
   private List<PreAnalysisTableMapperBean> tableList;
+  private List<PreAnalysisComplexTypeMapperBean> complexTypes;
 }

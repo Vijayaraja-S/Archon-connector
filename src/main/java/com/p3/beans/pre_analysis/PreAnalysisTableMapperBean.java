@@ -1,5 +1,8 @@
 package com.p3.beans.pre_analysis;
 
+import com.p3.beans.pre_analysis.d365.PreAnalysisActionMapperBean;
+import com.p3.beans.pre_analysis.d365.PreAnalysisFunctionMapperBean;
+import com.p3.beans.pre_analysis.d365.RelationDetails;
 import lombok.*;
 
 import java.util.List;
@@ -32,4 +35,6 @@ public class PreAnalysisTableMapperBean {
     */
   private String  entitySetUrl;
   private List<RelationDetails> relationDetails;
+  private List<PreAnalysisActionMapperBean> actionList;
+  private List<PreAnalysisFunctionMapperBean> functionList;
 }

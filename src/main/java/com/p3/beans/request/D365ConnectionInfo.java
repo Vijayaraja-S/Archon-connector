@@ -1,4 +1,4 @@
-package com.p3.beans;
+package com.p3.beans.request;
 
 
 import lombok.AllArgsConstructor;

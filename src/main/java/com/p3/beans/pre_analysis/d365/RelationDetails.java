@@ -1,4 +1,4 @@
-package com.p3.beans.pre_analysis;
+package com.p3.beans.pre_analysis.d365;
 
 import lombok.*;
 

@@ -1,9 +1,10 @@
 package com.p3.controller;
 
-import com.p3.beans.D365ConnectionInfo;
-import com.p3.service.D365Processor;
 import java.io.IOException;
 import javax.validation.Valid;
+
+import com.p3.beans.request.DatasourceProfileRequestDTO;
+import com.p3.service.connection.ConnectionManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/d365")
 public class D365Controller {
-  private final D365Processor d365Processor;
+  final ConnectionManagerService preAnalysis;
 
   @PostMapping("/start-pre-analysis")
-  public String startPreAnalysis(@Valid @RequestBody D365ConnectionInfo info) throws IOException {
-    return d365Processor.processPreAnalysis(info);
+  public String startPreAnalysis(@Valid @RequestBody DatasourceProfileRequestDTO datasourceProfileRequestDTO) throws IOException {
+    return "";
   }
 }

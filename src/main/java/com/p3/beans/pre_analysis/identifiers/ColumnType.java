@@ -7,5 +7,5 @@ public enum ColumnType implements Serializable {
     PRIMARY,
     FOREIGN,
     PRIMARY_COMPOSITE,
-    FOREIGN_COMPOSITE;
+    FOREIGN_COMPOSITE, COMPLEX;
 }
